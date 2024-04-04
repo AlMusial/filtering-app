@@ -1,0 +1,30 @@
+.productList {
+  display: flex;
+  width: 100%;
+  @media (min-width: 768px) {
+    max-width: 600px;
+    width: 600px;
+    margin: 30px auto;
+  }
+  &__search {
+    display: flex;
+    justify-content: space-between;
+  }
+  &__filter {
+    margin-top: 2px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+  }
+}
+
+.flex-column-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.w-100 {
+  width: 100%;
+}
