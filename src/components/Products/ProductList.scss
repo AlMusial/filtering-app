@@ -1,6 +1,6 @@
 .productList {
-  display: flex;
-  width: 100%;
+  margin: 10px auto;
+  width: 100vw;
   @media (min-width: 768px) {
     max-width: 600px;
     width: 600px;
@@ -9,6 +9,7 @@
   &__search {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
   &__filter {
     margin-top: 2px;
@@ -18,13 +19,21 @@
   }
 }
 
+.productList-alert {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .flex-column-box {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
 }
 
 .w-100 {
   width: 100%;
+}
+.margin-base-top {
+  margin-top: 15px;
 }
