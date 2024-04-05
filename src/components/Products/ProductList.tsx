@@ -3,21 +3,49 @@ import './ProductList.scss';
 import { useFetch } from '../hooks/useFetch';
 import { GET_PRODUCTS } from '../../utils/consts';
 import { NumericFormat } from 'react-number-format';
-import { Alert, CircularProgress } from '@mui/material';
+import {
+  Alert,
+  CircularProgress,
+  Pagination,
+  PaginationItem,
+} from '@mui/material';
 import Results from '../Results/Results';
 import { IProduct } from '../../utils/models';
 import SearchIcon from '@mui/icons-material/Search';
+
+import { Link, useLocation } from 'react-router-dom';
 //const Controlled = ControlledNumericField<any>();
 
 const ProductList: React.FC = () => {
-  const { data, loading, error } = useFetch(GET_PRODUCTS);
+  const { data, loading, error, pagesCount, fetchData } = useFetch(
+    `${GET_PRODUCTS}?page=1`
+  );
+  const [filteredValue, setFilteredValue] = React.useState<string>();
+  const [currentPage, _setCurrentPage] = React.useState<number>(1);
+  //const location = useLocation();
+  const query = new URLSearchParams(window.location.search);
+  const page = parseInt(query.get('page') || '1', 10);
 
   if (error) {
     console.log(error);
   }
   if (data) {
-    console.log('fetched data:', data);
+    console.log('fetched data:', data, query);
   }
+
+  React.useEffect(() => {
+    if (filteredValue != null && filteredValue?.length > 0) {
+      const getData = setTimeout(() => {
+        fetchData(`${GET_PRODUCTS}?page=${currentPage}?&id=${filteredValue}`);
+      }, 400);
+      return () => clearTimeout(getData);
+    }
+  }, [filteredValue]);
+
+  const onFilterProducts = (event: any) => {
+    console.log('e:', event, event.target.value);
+    setFilteredValue(event.target.value);
+  };
 
   return (
     <div className='productList flex-column-box'>
@@ -25,11 +53,10 @@ const ProductList: React.FC = () => {
         <NumericFormat
           className='productList__filter w-100'
           type='text'
-          value={'123'}
-          allowLeadingZeros
-          thousandSeparator=' '
-          //decimalSeparator=','
+          value={filteredValue}
+          allowLeadingZeros={false}
           allowedDecimalSeparators={[',', '.']}
+          onChange={(e) => onFilterProducts(e)}
           //decimalScale={0}
           //onChange={onChange}
         />
@@ -39,12 +66,28 @@ const ProductList: React.FC = () => {
         {loading ? (
           <CircularProgress />
         ) : (
-          data &&
-          data.data.map((row: IProduct, index: number) => (
-            <Results key={index} product={row} />
+          data != null &&
+          (Array.isArray(data.data) ? (
+            data.data.map((row: IProduct, index: number) => (
+              <Results key={index} product={row} />
+            ))
+          ) : (
+            <Results key={100} product={data.data} />
           ))
         )}
       </div>
+      <Pagination
+        page={page}
+        count={pagesCount}
+        sx={{ display: 'flex', justifyContent: 'center' }}
+        renderItem={(item) => (
+          <PaginationItem
+            component={Link}
+            to={`/?page=${item.page}`}
+            {...item}
+          />
+        )}
+      />
       {error && (
         <div className='alert margin-base-top'>
           <Alert severity='error'>{error}</Alert>

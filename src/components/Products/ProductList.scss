@@ -19,12 +19,6 @@
   }
 }
 
-.productList-alert {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
 .flex-column-box {
   display: flex;
   flex-direction: column;
@@ -36,4 +30,14 @@
 }
 .margin-base-top {
   margin-top: 15px;
+}
+
+.flex-row-between {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 }
