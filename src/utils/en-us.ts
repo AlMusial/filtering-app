@@ -2,13 +2,15 @@ interface IAppStrings {
   product: string;
   year: string;
   errors: {
-    fetchError: string;
+    forbiddenError: string;
+    serverError: string;
   };
 }
 export const strings: IAppStrings = {
   product: 'Product',
   year: 'year',
   errors: {
-    fetchError: 'Something went wrong',
+    forbiddenError: 'Access to this page is unavailable.',
+    serverError: 'Something went wrong. Please try again later.',
   },
 };

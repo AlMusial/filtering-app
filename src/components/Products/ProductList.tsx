@@ -14,9 +14,9 @@ import { IProduct } from '../../utils/models';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { Link } from 'react-router-dom';
-//const Controlled = ControlledNumericField<any>();
+import { strings } from '../../utils/en-us';
 
-const ProductList: React.FC = () => {
+export const ProductList: React.FC = () => {
   const { data, loading, error, totalCount, fetchData } = useFetch(
     `${GET_PRODUCTS}?page=1`
   );
@@ -47,6 +47,10 @@ const ProductList: React.FC = () => {
     setFilteredValue(event.target.value);
   };
 
+  const checkIfServerErrorRange = (code: number) => {
+    return code >= 500;
+  };
+
   return (
     <div className='productList flex-column-box'>
       <div className='productList__search'>
@@ -67,6 +71,7 @@ const ProductList: React.FC = () => {
           <CircularProgress />
         ) : (
           data != null &&
+          error === null &&
           (Array.isArray(data.data) ? (
             data.data
               .slice(0, ITEM_PER_PAGE)
@@ -78,6 +83,19 @@ const ProductList: React.FC = () => {
           ))
         )}
       </div>
+      {error && (
+        <div className='alert margin-base-top'>
+          <Alert severity='error'>
+            {
+              strings.errors[
+                checkIfServerErrorRange(error.request.status)
+                  ? 'serverError'
+                  : 'forbiddenError'
+              ]
+            }
+          </Alert>
+        </div>
+      )}
       <Pagination
         page={page}
         count={Math.ceil(totalCount / ITEM_PER_PAGE)}
@@ -90,13 +108,6 @@ const ProductList: React.FC = () => {
           />
         )}
       />
-      {error && (
-        <div className='alert margin-base-top'>
-          <Alert severity='error'>{error}</Alert>
-        </div>
-      )}
     </div>
   );
 };
-
-export default ProductList;
