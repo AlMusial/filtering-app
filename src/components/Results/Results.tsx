@@ -24,7 +24,7 @@ const Results: React.FC<IResults> = ({ product }) => {
         <div className='result-row__content'>
           <span className='result-row__id'>ID: {product.id}</span>
           <Button
-            sx={{ color: 'white' }}
+            sx={{ color: 'white', width: '60%' }}
             onClick={() => setOpenDetails((prev) => !prev)}
           >
             <span>

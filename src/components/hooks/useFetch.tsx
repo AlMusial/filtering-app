@@ -23,6 +23,7 @@ export const useFetch = (initUrl: string): rowDataHook => {
   React.useEffect(() => {
     (async function () {
       try {
+        setError(null);
         setLoading(true);
         const isUnfiltered = !url.includes('&id=');
         const response = await axios.get(url);
@@ -37,16 +38,6 @@ export const useFetch = (initUrl: string): rowDataHook => {
       }
     })();
   }, [url]);
-
-  React.useEffect(() => {
-    if (!!error) {
-      timeout = setTimeout(() => {
-        setError(null);
-        setUrl(initUrl);
-      }, 2000);
-    }
-    return () => clearTimeout(timeout);
-  }, [error]);
 
   const fetchData = (a: string) => setUrl(a);
 

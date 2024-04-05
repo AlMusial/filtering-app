@@ -38,9 +38,7 @@ const DetailsModal: React.FC<IDetailsModal> = ({ isOpen, details, close }) => {
               lineHeight: '0px',
             }}
           >
-            <h2>
-              {strings.product}: {details.name.toUpperCase()}
-            </h2>
+            <h2>{details.name.toUpperCase()}</h2>
           </Typography>
           <IconButton onClick={close}>
             <CloseIcon />

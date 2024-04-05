@@ -62,6 +62,7 @@ export const ProductList: React.FC = () => {
         page: page.toString(),
       })}`
     );
+    setFilteredValue('');
     setCurrentPage(page);
   };
 
