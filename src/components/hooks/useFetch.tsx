@@ -5,7 +5,7 @@ export type rowDataHook = {
   error: any;
   loading: boolean;
   unfiltered: boolean;
-  pagesCount: number;
+  totalCount: number;
   fetchData(url: string): void;
 };
 
@@ -15,7 +15,7 @@ export const useFetch = (initUrl: string): rowDataHook => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [unfiltered, setUnfiltered] = useState(true);
-  const [pagesCount, setPagesCount] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState<string>(initUrl);
@@ -28,7 +28,7 @@ export const useFetch = (initUrl: string): rowDataHook => {
         const response = await axios.get(url);
         setData(response.data);
         setUnfiltered(isUnfiltered);
-        setPagesCount(response.data.total_pages);
+        setTotalCount(response.data.total);
       } catch (err: any) {
         console.log('ERR:', err);
         setError(err);
@@ -49,5 +49,5 @@ export const useFetch = (initUrl: string): rowDataHook => {
 
   const fetchData = (a: string) => setUrl(a);
 
-  return { data, error, loading, unfiltered, pagesCount, fetchData };
+  return { data, error, loading, unfiltered, totalCount, fetchData };
 };

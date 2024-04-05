@@ -1,7 +1,7 @@
 import React from 'react';
 import './ProductList.scss';
 import { useFetch } from '../hooks/useFetch';
-import { GET_PRODUCTS } from '../../utils/consts';
+import { GET_PRODUCTS, ITEM_PER_PAGE } from '../../utils/consts';
 import { NumericFormat } from 'react-number-format';
 import {
   Alert,
@@ -13,11 +13,11 @@ import Results from '../Results/Results';
 import { IProduct } from '../../utils/models';
 import SearchIcon from '@mui/icons-material/Search';
 
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 //const Controlled = ControlledNumericField<any>();
 
 const ProductList: React.FC = () => {
-  const { data, loading, error, pagesCount, fetchData } = useFetch(
+  const { data, loading, error, totalCount, fetchData } = useFetch(
     `${GET_PRODUCTS}?page=1`
   );
   const [filteredValue, setFilteredValue] = React.useState<string>();
@@ -68,9 +68,11 @@ const ProductList: React.FC = () => {
         ) : (
           data != null &&
           (Array.isArray(data.data) ? (
-            data.data.map((row: IProduct, index: number) => (
-              <Results key={index} product={row} />
-            ))
+            data.data
+              .slice(0, ITEM_PER_PAGE)
+              .map((row: IProduct, index: number) => (
+                <Results key={index} product={row} />
+              ))
           ) : (
             <Results key={100} product={data.data} />
           ))
@@ -78,7 +80,7 @@ const ProductList: React.FC = () => {
       </div>
       <Pagination
         page={page}
-        count={pagesCount}
+        count={Math.ceil(totalCount / ITEM_PER_PAGE)}
         sx={{ display: 'flex', justifyContent: 'center' }}
         renderItem={(item) => (
           <PaginationItem
