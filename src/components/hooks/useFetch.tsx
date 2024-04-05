@@ -42,6 +42,7 @@ export const useFetch = (initUrl: string): rowDataHook => {
     if (!!error) {
       timeout = setTimeout(() => {
         setError(null);
+        setUrl(initUrl);
       }, 2000);
     }
     return () => clearTimeout(timeout);

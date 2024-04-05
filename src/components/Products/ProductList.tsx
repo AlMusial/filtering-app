@@ -12,43 +12,51 @@ import {
 import Results from '../Results/Results';
 import { IProduct } from '../../utils/models';
 import SearchIcon from '@mui/icons-material/Search';
-
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { strings } from '../../utils/en-us';
+import { useSearchParams } from 'react-router-dom';
 
 export const ProductList: React.FC = () => {
+  const location = useLocation();
   const { data, loading, error, totalCount, fetchData } = useFetch(
-    `${GET_PRODUCTS}?page=1`
+    `${GET_PRODUCTS}${location.search}`
   );
-  const [filteredValue, setFilteredValue] = React.useState<string>();
-  const [currentPage, _setCurrentPage] = React.useState<number>(1);
-  //const location = useLocation();
   const query = new URLSearchParams(window.location.search);
   const page = parseInt(query.get('page') || '1', 10);
-
-  if (error) {
-    console.log(error);
-  }
-  if (data) {
-    console.log('fetched data:', data, query);
-  }
+  const [filteredValue, setFilteredValue] = React.useState<string>();
+  const [currentPage, setCurrentPage] = React.useState<number>();
+  const [, setSearchParams] = useSearchParams();
 
   React.useEffect(() => {
     if (filteredValue != null && filteredValue?.length > 0) {
       const getData = setTimeout(() => {
-        fetchData(`${GET_PRODUCTS}?page=${currentPage}?&id=${filteredValue}`);
-      }, 400);
+        fetchData(`${GET_PRODUCTS}?&id=${filteredValue}`);
+      }, 500);
+      return () => clearTimeout(getData);
+    } else if (currentPage != null) {
+      const getData = setTimeout(() => {
+        fetchData(`${GET_PRODUCTS}?&page=${currentPage}`);
+      }, 100);
       return () => clearTimeout(getData);
     }
-  }, [filteredValue]);
+  }, [filteredValue, currentPage]);
 
   const onFilterProducts = (event: any) => {
-    console.log('e:', event, event.target.value);
+    setSearchParams(
+      `?${new URLSearchParams({
+        page: currentPage != null ? currentPage.toString() : '1',
+        id: event.target.value,
+      })}`
+    );
     setFilteredValue(event.target.value);
   };
 
   const checkIfServerErrorRange = (code: number) => {
     return code >= 500;
+  };
+
+  const onChangePage = (_e: any, page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -61,8 +69,6 @@ export const ProductList: React.FC = () => {
           allowLeadingZeros={false}
           allowedDecimalSeparators={[',', '.']}
           onChange={(e) => onFilterProducts(e)}
-          //decimalScale={0}
-          //onChange={onChange}
         />
         <SearchIcon />
       </div>
@@ -97,9 +103,10 @@ export const ProductList: React.FC = () => {
         </div>
       )}
       <Pagination
-        page={page}
+        defaultPage={page}
         count={Math.ceil(totalCount / ITEM_PER_PAGE)}
         sx={{ display: 'flex', justifyContent: 'center' }}
+        onChange={onChangePage}
         renderItem={(item) => (
           <PaginationItem
             component={Link}

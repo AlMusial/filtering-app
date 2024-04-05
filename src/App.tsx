@@ -1,12 +1,14 @@
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-import ProductList from './components/Products/ProductList';
+import { ProductList } from './components/Products/ProductList';
 
 function App() {
   return (
     <div className='App'>
       <BrowserRouter>
-        <ProductList />
+        <Routes>
+          <Route path='*' element={<ProductList />} />
+        </Routes>
       </BrowserRouter>
     </div>
   );
