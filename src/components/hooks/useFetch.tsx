@@ -24,11 +24,11 @@ export const useFetch = (initUrl: string): rowDataHook => {
     (async function () {
       try {
         setLoading(true);
-        const isUnfiltered = !url.includes('?id=');
+        const isUnfiltered = !url.includes('&id=');
         const response = await axios.get(url);
         setData(response.data);
         setUnfiltered(isUnfiltered);
-        setTotalCount(response.data.total);
+        if (response.data.total != null) setTotalCount(response.data.total);
       } catch (err: any) {
         console.log('ERR:', err);
         setError(err);

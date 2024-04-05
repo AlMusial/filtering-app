@@ -22,20 +22,21 @@ export const ProductList: React.FC = () => {
     `${GET_PRODUCTS}${location.search}`
   );
   const query = new URLSearchParams(window.location.search);
-  const page = parseInt(query.get('page') || '1', 10);
+  const page =
+    query.get('page') != null ? parseInt(query.get('page') || '1') : null;
   const [filteredValue, setFilteredValue] = React.useState<string>();
-  const [currentPage, setCurrentPage] = React.useState<number>();
+  const [currentPage, setCurrentPage] = React.useState<number | null>(page);
   const [, setSearchParams] = useSearchParams();
 
   React.useEffect(() => {
-    if (filteredValue != null && filteredValue?.length > 0) {
+    if (filteredValue != null && filteredValue.length > 0) {
       const getData = setTimeout(() => {
         fetchData(`${GET_PRODUCTS}?&id=${filteredValue}`);
       }, 500);
       return () => clearTimeout(getData);
     } else if (currentPage != null) {
       const getData = setTimeout(() => {
-        fetchData(`${GET_PRODUCTS}?&page=${currentPage}`);
+        fetchData(`${GET_PRODUCTS}?page=${currentPage}`);
       }, 100);
       return () => clearTimeout(getData);
     }
@@ -45,7 +46,7 @@ export const ProductList: React.FC = () => {
     setSearchParams(
       `?${new URLSearchParams({
         page: currentPage != null ? currentPage.toString() : '1',
-        id: event.target.value,
+        ...(event.target.value.length > 0 && { id: event.target.value }),
       })}`
     );
     setFilteredValue(event.target.value);
@@ -56,6 +57,11 @@ export const ProductList: React.FC = () => {
   };
 
   const onChangePage = (_e: any, page: number) => {
+    setSearchParams(
+      `?${new URLSearchParams({
+        page: page.toString(),
+      })}`
+    );
     setCurrentPage(page);
   };
 
@@ -103,7 +109,7 @@ export const ProductList: React.FC = () => {
         </div>
       )}
       <Pagination
-        defaultPage={page}
+        defaultPage={page || 1}
         count={Math.ceil(totalCount / ITEM_PER_PAGE)}
         sx={{ display: 'flex', justifyContent: 'center' }}
         onChange={onChangePage}
