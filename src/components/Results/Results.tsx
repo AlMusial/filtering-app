@@ -36,6 +36,7 @@ const Results: React.FC<IResults> = ({ product }) => {
       <DetailsModal
         isOpen={openDetails}
         close={() => setOpenDetails((prev) => !prev)}
+        details={product}
       />
     </>
   );
